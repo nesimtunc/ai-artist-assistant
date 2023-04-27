@@ -6,6 +6,8 @@ This repository contains the code and resources for the AI models, fine-tuning, 
 
 **For the web platform and community interaction, check out the [ai-artist-assistant-web repository](https://github.com/nesimtunc/ai-artist-assistant-web).**
 
+Current Artist: [Ahmet Kaya](https://en.wikipedia.org/wiki/Ahmet_Kaya)
+
 ## Features
 
 - AI-powered content generation: Integration with state-of-the-art AI models for generating lyrics, songs, and potential chat functionality.
