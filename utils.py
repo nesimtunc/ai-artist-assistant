@@ -1,13 +1,19 @@
 import torch
 import torch.nn.functional as F
 
-# Convert a text string to a tensor of character indices
+
 def text_to_tensor(text, char_to_idx):
+    '''
+    Convert a text string to a tensor of character indices
+    '''
     indices = [char_to_idx[char] for char in text]
     return torch.tensor(indices)
 
-# Function to generate text using the trained model
-def generate_text(model, seed, length,temperature, char_to_idx, idx_to_char):
+
+def generate_text(model, seed, length, temperature, char_to_idx, idx_to_char):
+    '''
+    Function to generate text using the trained model
+    '''
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model.eval()
     input_seq = text_to_tensor(seed, char_to_idx).to(device)
@@ -22,6 +28,7 @@ def generate_text(model, seed, length,temperature, char_to_idx, idx_to_char):
         generated_text += next_char
 
         input_seq = input_seq[1:]
-        input_seq = torch.cat((input_seq, torch.tensor([next_char_idx]).to(device)))
+        input_seq = torch.cat(
+            (input_seq, torch.tensor([next_char_idx]).to(device)))
 
     return generated_text

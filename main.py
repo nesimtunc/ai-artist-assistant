@@ -60,10 +60,10 @@ for epoch in range(num_epochs):
 while True:
     seed = input("Enter a lyrics title: ")
 
-    generated_text = generate_text(model, 
-        seed=seed, 
-        length=600,
-        temperature=0.4,
-        char_to_idx=char_to_idx,
-        idx_to_char=idx_to_char)
+    generated_text = generate_text(model,
+                                   seed=seed,
+                                   length=600,
+                                   temperature=0.4,
+                                   char_to_idx=char_to_idx,
+                                   idx_to_char=idx_to_char)
     print(generated_text)

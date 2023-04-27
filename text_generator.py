@@ -1,7 +1,11 @@
 import torch.nn as nn
 
-# Define the LSTM model for text generation
+
 class TextGenerator(nn.Module):
+    '''
+    Define the LSTM model for text generation    
+    '''
+
     def __init__(self, vocab_size, embedding_dim, hidden_dim):
         super(TextGenerator, self).__init__()
         self.embedding = nn.Embedding(vocab_size, embedding_dim)
