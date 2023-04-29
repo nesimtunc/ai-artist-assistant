@@ -1,8 +1,14 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import os
 from text_generator import TextGenerator
 from utils import text_to_tensor, generate_text
+
+embedding_dim = 300
+hidden_dim = 1024
+num_epochs = 150
+seq_length = 64
 
 # Read the input text file
 filename = "input.txt"
@@ -15,55 +21,59 @@ vocab_size = len(chars)
 char_to_idx = {char: idx for idx, char in enumerate(chars)}
 idx_to_char = {idx: char for idx, char in enumerate(chars)}
 
-# Instantiate the model, loss function, and optimizer
-embedding_dim = 164
-hidden_dim = 256
-
 model = TextGenerator(vocab_size, embedding_dim, hidden_dim)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters())
 
-# Train the model
-num_epochs = 150
-seq_length = 50
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model.to(device)
 criterion.to(device)
 
-for epoch in range(num_epochs):
-    model.train()
-    running_loss = 0.0
-    hidden = None
+model_save_path = "text_generator_model.pth"
 
-    for i in range(0, len(text) - seq_length, seq_length):
-        optimizer.zero_grad()
+if os.path.exists(model_save_path):
+    # Load the model
+    loaded_model = TextGenerator(vocab_size, embedding_dim, hidden_dim)
+    loaded_model.load_state_dict(torch.load(
+        model_save_path, map_location=device))
+    loaded_model.to(device)
 
-        input_seq = text_to_tensor(
-            text[i:i+seq_length], char_to_idx).to(device)
-        target_seq = text_to_tensor(
-            text[i+1:i+seq_length+1], char_to_idx).to(device)
+    # Interactive loop to generate text based on user input
+    while True:
+        seed = input("Enter a lyrics title: ")
 
-        predictions, hidden = model(input_seq.unsqueeze(0), hidden)
-        hidden = (hidden[0].detach(), hidden[1].detach())
+        generated_text = generate_text(loaded_model,
+                                       seed=seed,
+                                       length=600,
+                                       temperature=0.4,
+                                       char_to_idx=char_to_idx,
+                                       idx_to_char=idx_to_char)
+        print(generated_text)
+else:
+    for epoch in range(num_epochs):
+        model.train()
+        running_loss = 0.0
+        hidden = None
 
-        loss = criterion(predictions.squeeze(0), target_seq)
-        loss.backward()
-        optimizer.step()
+        for i in range(0, len(text) - seq_length, seq_length):
+            optimizer.zero_grad()
 
-        running_loss += loss.item()
+            input_seq = text_to_tensor(
+                text[i:i+seq_length], char_to_idx).to(device)
+            target_seq = text_to_tensor(
+                text[i+1:i+seq_length+1], char_to_idx).to(device)
 
-    print(
-        f"Epoch {epoch+1}/{num_epochs}, Loss: {running_loss / (len(text) // seq_length):.4f}")
+            predictions, hidden = model(input_seq.unsqueeze(0), hidden)
+            hidden = (hidden[0].detach(), hidden[1].detach())
 
+            loss = criterion(predictions.squeeze(0), target_seq)
+            loss.backward()
+            optimizer.step()
 
-# Interactive loop to generate text based on user input
-while True:
-    seed = input("Enter a lyrics title: ")
+            running_loss += loss.item()
 
-    generated_text = generate_text(model,
-                                   seed=seed,
-                                   length=600,
-                                   temperature=0.4,
-                                   char_to_idx=char_to_idx,
-                                   idx_to_char=idx_to_char)
-    print(generated_text)
+        print(
+            f"Epoch {epoch+1}/{num_epochs}, Loss: {running_loss / (len(text) // seq_length):.4f}")
+
+    # Save the model
+    torch.save(model.state_dict(), model_save_path)
