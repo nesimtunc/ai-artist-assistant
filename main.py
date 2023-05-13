@@ -25,7 +25,15 @@ model = TextGenerator(vocab_size, embedding_dim, hidden_dim)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters())
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = ""
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif torch.has_mps:
+    # Apple Silicon's GPUs
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
+
 model.to(device)
 criterion.to(device)
 
@@ -50,6 +58,7 @@ if os.path.exists(model_save_path):
                                        idx_to_char=idx_to_char)
         print(generated_text)
 else:
+    print('Start to train the model... on device: {device}')
     for epoch in range(num_epochs):
         model.train()
         running_loss = 0.0
