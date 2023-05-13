@@ -5,9 +5,9 @@ import os
 from text_generator import TextGenerator
 from utils import text_to_tensor, generate_text
 
-embedding_dim = 300
-hidden_dim = 1024
-num_epochs = 150
+embedding_dim = 64
+hidden_dim = 256
+num_epochs = 100
 seq_length = 64
 
 # Read the input text file
