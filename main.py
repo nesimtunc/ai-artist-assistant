@@ -58,7 +58,7 @@ if os.path.exists(model_save_path):
                                        idx_to_char=idx_to_char)
         print(generated_text)
 else:
-    print('Start to train the model... on device: {device}')
+    print(f'Start to train the model... on device: {device}')
     for epoch in range(num_epochs):
         model.train()
         running_loss = 0.0
