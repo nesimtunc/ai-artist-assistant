@@ -25,6 +25,12 @@ To set up the project on your local machine, follow these steps:
 5. Install the required dependencies: `pip install -r requirements.txt`
 6. Run `python main.py` to start the application, data preprocessing, model training, and content generation.
 
+## Environment
+
+Python: **3.10.8**
+
+Torch: **2.0.0**
+
 ## Contributing
 
 We welcome contributions from the community! Whether you're interested in adding new features, fixing bugs, or improving documentation, your input is valuable to the project's growth. To contribute, follow these steps:
